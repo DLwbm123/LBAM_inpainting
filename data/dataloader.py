@@ -36,6 +36,9 @@ class GetData(Dataset):
         mask.masked_fill_(ones, 1.0)
         mask.masked_fill_(zeros, 0.0)
 
+        # here, we suggest that the white values(ones) denotes the area to be inpainted, 
+        # and dark values(zeros) is the values remained. 
+        # Therefore, we do a reverse step let mask = 1 - mask, the input = groundTruth * mask, :).
         mask = 1 - mask
         inputImage = groundTruth * mask
         inputImage = torch.cat((inputImage, mask[0].view(1, self.cropSize[0], self.cropSize[1])), 0)
