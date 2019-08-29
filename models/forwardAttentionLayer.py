@@ -5,10 +5,10 @@ from models.ActivationFunction import GaussActivation, MaskUpdate
 from models.weightInitial import weights_init
 
 # learnable forward attention conv layer
-class ForwardAttention(nn.Module):
+class ForwardAttentionLayer(nn.Module):
     def __init__(self, inputChannels, outputChannels, kernelSize, stride, 
         padding, dilation=1, groups=1, bias=False):
-        super(ForwardAttention, self).__init__()
+        super(ForwardAttentionLayer, self).__init__()
 
         self.conv = nn.Conv2d(inputChannels, outputChannels, kernelSize, stride, padding, dilation, \
             groups, bias)
@@ -31,7 +31,7 @@ class ForwardAttention(nn.Module):
         maskFeatures = self.maskConv(inputMasks)
         #convFeatures_skip = convFeatures.clone()
 
-        maskActiv = self.activ(maskFeatures)
+        maskActiv = self.activationFuncG_A(maskFeatures)
         convOut = convFeatures * maskActiv
 
         maskUpdate = self.updateMask(maskFeatures)
@@ -39,21 +39,21 @@ class ForwardAttention(nn.Module):
         return convOut, maskUpdate, convFeatures, maskActiv
 
 # forward attention gather feature activation and batchnorm
-class ForwardAttentionLayer(nn.Module):
+class ForwardAttention(nn.Module):
     def __init__(self, inputChannels, outputChannels, bn=True, sample='down-4', \
         activ='leaky', convBias=False):
-        super(ForwardAttentionLayer, self).__init__()
+        super(ForwardAttention, self).__init__()
 
         if sample == 'down-4':
-            self.conv = ForwardAttention(inputChannels, outputChannels, 4, 2, 1, bias=convBias)
+            self.conv = ForwardAttentionLayer(inputChannels, outputChannels, 4, 2, 1, bias=convBias)
         elif sample == 'down-5':
-            self.conv = ForwardAttention(inputChannels, outputChannels, 5, 2, 2, bias=convBias)
+            self.conv = ForwardAttentionLayer(inputChannels, outputChannels, 5, 2, 2, bias=convBias)
         elif sample == 'down-7':
-            self.conv = ForwardAttention(inputChannels, outputChannels, 7, 2, 3, bias=convBias)
+            self.conv = ForwardAttentionLayer(inputChannels, outputChannels, 7, 2, 3, bias=convBias)
         elif sample == 'down-3':
-            self.conv = ForwardAttention(inputChannels, outputChannels, 3, 2, 1, bias=convBias)
+            self.conv = ForwardAttentionLayer(inputChannels, outputChannels, 3, 2, 1, bias=convBias)
         else:
-            self.conv = ForwardAttention(inputChannels, outputChannels, 3, 1, 1, bias=convBias)
+            self.conv = ForwardAttentionLayer(inputChannels, outputChannels, 3, 1, 1, bias=convBias)
         
         if bn:
             self.bn = nn.BatchNorm2d(outputChannels)

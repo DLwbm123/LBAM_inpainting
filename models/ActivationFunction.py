@@ -38,6 +38,7 @@ class GaussActivation(nn.Module):
 # mask updating functions, we recommand using alpha that is larger than 0 and lower than 1.0
 class MaskUpdate(nn.Module):
     def __init__(self, alpha):
+        super(MaskUpdate, self).__init__()
 
         self.updateFunc = nn.ReLU(False)
         self.alpha = Parameter(torch.tensor(alpha, dtype=torch.float32))
