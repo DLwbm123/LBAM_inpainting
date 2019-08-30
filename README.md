@@ -1,2 +1,2 @@
 # LBAM_inpainting
-Code will be available soon.
+We will laterly release a link for download the pretrained models, as the model is somehow a little bit large.
