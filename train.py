@@ -38,6 +38,7 @@ parser.add_argument('--maskRoot', type=str,
 args = parser.parse_args()
 
 
+
 cuda = torch.cuda.is_available()
 if cuda:
     print('Cuda is available!')
