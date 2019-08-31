@@ -34,6 +34,7 @@ parser.add_argument('--dataRoot', type=str,
                     default='')
 parser.add_argument('--maskRoot', type=str,
                     default='')
+parser.add_argument('--pretrained',type=str, default='', help='pretrained models for finetuning')
 
 args = parser.parse_args()
 
@@ -64,6 +65,10 @@ data_loader = DataLoader(imgData, batch_size=batchSize,
 num_epochs = 500
 
 netG = LBAMModel(4, 3)
+if args.pretrained != '':
+    netG.load_state_dict(torch.load(args.pretrained))
+
+
 
 numOfGPUs = torch.cuda.device_count()
 
