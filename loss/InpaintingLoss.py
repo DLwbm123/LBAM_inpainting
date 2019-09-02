@@ -97,8 +97,8 @@ class InpaintingLossWithGAN(nn.Module):
 
         prcLoss = 0.0
         for i in range(3):
-            prcLoss += 0.01 * self.l1(feat_output[i], feat_gt[i])
-            prcLoss += 0.01 * self.l1(feat_output_comp[i], feat_gt[i])
+            prcLoss += 0.002 * self.l1(feat_output[i], feat_gt[i])
+            prcLoss += 0.002 * self.l1(feat_output_comp[i], feat_gt[i])
 
         styleLoss = 0.0
         for i in range(3):
@@ -117,6 +117,6 @@ class InpaintingLossWithGAN(nn.Module):
         self.writer.add_scalar('LossPrc/Perceptual loss', prcLoss.item(), count)    
         self.writer.add_scalar('LossStyle/style loss', styleLoss.item(), count)    
 
-        GLoss = holeLoss + validAreaLoss + prcLoss + styleLoss + 0.1 * D_fake
+        GLoss = holeLoss + validAreaLoss + prcLoss + styleLoss + 0.01 * D_fake
         self.writer.add_scalar('Generator/Joint loss', GLoss.item(), count)    
         return GLoss.sum()
