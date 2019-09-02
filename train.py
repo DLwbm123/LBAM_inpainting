@@ -15,7 +15,7 @@ from data.dataloader import GetData
 from loss.InpaintingLoss import InpaintingLossWithGAN
 from models.LBAMModel import LBAMModel, VGG16FeatureExtractor
 
-torch.set_num_threads(5)
+torch.set_num_threads(6)
 
 
 parser = argparse.ArgumentParser()
@@ -35,7 +35,7 @@ parser.add_argument('--dataRoot', type=str,
 parser.add_argument('--maskRoot', type=str,
                     default='')
 parser.add_argument('--pretrained',type=str, default='', help='pretrained models for finetuning')
-
+parser.add_argument('--train_epochs', type=int, default=500, help='training epochs')
 args = parser.parse_args()
 
 
@@ -62,7 +62,7 @@ imgData = GetData(dataRoot, maskRoot, loadSize, cropSize)
 data_loader = DataLoader(imgData, batch_size=batchSize, 
                          shuffle=True, num_workers=args.numOfWorkers, drop_last=False, pin_memory=True)
 
-num_epochs = 500
+num_epochs = args.train_epochs
 
 netG = LBAMModel(4, 3)
 if args.pretrained != '':
@@ -80,7 +80,7 @@ if cuda:
 count = 1
 
 
-G_optimizer = optim.Adam(netG.parameters(), lr=0.0001, betas=(0.5, 0.9))
+G_optimizer = optim.Adam(netG.parameters(), lr=0.00005, betas=(0.5, 0.9))
 
 
 criterion = InpaintingLossWithGAN(args.logPath, VGG16FeatureExtractor(), lr=0.00001, betasInit=(0.5, 0.9), Lamda=10.0)
@@ -112,7 +112,7 @@ for i in range(1, num_epochs + 1):
         G_loss.backward()
         G_optimizer.step()
 
-        #print('Generator Loss of epoch{} is {}'.format(i, G_loss.item()))
+        print('Generator Loss of epoch{} is {}'.format(i, G_loss.item()))
 
         count += 1
 
